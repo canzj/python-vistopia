@@ -144,5 +144,30 @@ def save_transcript(ctx, **argv):
     )
 
 
+@main.command("save")
+@click.option("--id", type=click.INT, required=True)
+@click.option("--no-tag", is_flag=True, default=False,
+              help="Do not add IDv3 tags.")
+@click.option("--episode-id", help="Episode ID in the form '1-3,4,8'")
+@click.pass_context
+def save(ctx, **argv):
+    content_id = argv.pop("id")
+    episode_id = argv.pop("episode_id", None)
+    episodes = set(range_expand(episode_id)) if episode_id else None
+
+    logger.debug(json.dumps(
+        ctx.obj.visitor.get_catalog(content_id), indent=2, ensure_ascii=False))
+
+    ctx.obj.visitor.save_transcript(
+        content_id,
+        episodes=episodes
+    )
+    ctx.obj.visitor.save_show(
+        content_id,
+        no_tag=argv.pop("no_tag"),
+        episodes=episodes,
+    )
+
+
 if __name__ == "__main__":
     main()
