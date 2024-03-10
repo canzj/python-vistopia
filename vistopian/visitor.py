@@ -118,11 +118,13 @@ class Visitor:
 
                 html_files.append(str(fname))
 
-        print(html_files)  # Check the content of html_files
         output_file = str(show_dir / f'{catalog["title"]}.pdf')
-        print(output_file)  # Check the output file path
 
-        pdfkit.from_file(html_files, output_file)
+        options = {
+            'enable-local-file-access': None,
+        }
+
+        pdfkit.from_file(html_files, output_file, options=options)
 
     @staticmethod
     def retag(fname, article_info, catalog_info, series_info):
