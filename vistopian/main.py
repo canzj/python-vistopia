@@ -28,7 +28,6 @@ class Context:
 @click.option("-v", "--verbosity", default="INFO", help="Logging level.")
 @click.pass_context
 def main(ctx, **argv):
-
     verbosity = argv.pop("verbosity").upper()
     logging.basicConfig(format='%(asctime)s %(message)s', level=verbosity)
 
@@ -115,7 +114,7 @@ def show_content(ctx, **argv):
 def save_show(ctx, **argv):
     content_id = argv.pop("id")
     episode_id = argv.pop("episode_id", None)
-    episodes = set(range_expand(episode_id)) if episode_id else set()
+    episodes = set(range_expand(episode_id)) if episode_id else None
 
     logger.debug(json.dumps(
         ctx.obj.visitor.get_catalog(content_id), indent=2, ensure_ascii=False))
