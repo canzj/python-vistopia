@@ -4,7 +4,7 @@ from urllib.request import urlretrieve, urlcleanup
 from logging import getLogger
 from functools import lru_cache
 from typing import Optional
-
+import pdfkit
 
 logger = getLogger(__name__)
 
@@ -70,7 +70,7 @@ class Visitor:
             for article in part["part"]:
 
                 if episodes is not None and \
-                      int(article["sort_number"]) not in episodes:
+                        int(article["sort_number"]) not in episodes:
                     continue
 
                 fname = show_dir / "{}.mp3".format(article["title"])
@@ -92,11 +92,13 @@ class Visitor:
         show_dir = Path(catalog["title"])
         show_dir.mkdir(exist_ok=True)
 
+        html_files = []
+
         for part in catalog["catalog"]:
             for article in part["part"]:
 
                 if episodes is not None and \
-                      int(article["sort_number"]) not in episodes:
+                        int(article["sort_number"]) not in episodes:
                     continue
 
                 fname = show_dir / "{}.html".format(article["title"])
@@ -113,6 +115,14 @@ class Visitor:
 
                     with open(fname, "w") as f:
                         f.write(content)
+
+                html_files.append(str(fname))
+
+        print(html_files)  # Check the content of html_files
+        output_file = str(show_dir / f'{catalog["title"]}.pdf')
+        print(output_file)  # Check the output file path
+
+        pdfkit.from_file(html_files, output_file)
 
     @staticmethod
     def retag(fname, article_info, catalog_info, series_info):
